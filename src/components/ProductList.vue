@@ -1,24 +1,18 @@
 <template>
-  <ul class="catalog__list">
-    <li v-for="(product, index) in products" class="catalog__item" :key="index">
-      <a class="catalog__pic" href="#">
-        <img :src="product.image" :alt="product.title">
-      </a>
-      <h3 class="catalog__title">
-        <a href="#">
-          {{product.title}}
-        </a>
-      </h3>
-      <span class="catalog__price">
-        {{product.price}} ₽
-      </span>
-    </li>
-  </ul>
+  <div v-if="products.length > 0">
+    <h2 v-if="title">{{ title }}</h2>
+    <ul class="catalog__list">
+      <ProductItem v-for="(product, index) in products" :product="product" :key="index"/>
+    </ul>
+  </div>
 </template>
 
 <script>
+import ProductItem from './ProductItem.vue';
+
 export default {
-  props: ['products'],
+  props: ['products', 'title'],
+  components: { ProductItem },
 };
 </script>
 

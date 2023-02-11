@@ -2,7 +2,7 @@
   <section class="catalog">
     <ul class="catalog__list">
 
-      <ProductList :products="products"/>
+      <ProductList :products="products" :title="title"/>
     </ul>
 
     <ul class="catalog__pagination pagination">
@@ -70,7 +70,8 @@ export default {
   components: { ProductList },
   data() {
     return {
-      products,
+      products: products,
+      title: 'Каталог моих товаров'
     };
   },
 };
