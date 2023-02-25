@@ -1,5 +1,5 @@
 <template>
-  <li class="catalog__item" :key="key">
+  <li class="catalog__item" :key="product.title">
     <a class="catalog__pic" href="#">
       <img :src="product.image" :alt="product.title">
     </a>
