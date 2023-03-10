@@ -4,25 +4,26 @@
 
         <form class="filter__form form" action="#" method="get" @submit.prevent="submit">
             <fieldset class="form__block">
-            <legend class="form__legend">Цена</legend>
-            <label class="form__label form__label--price">
-                <input v-model.number="currentPriceFrom" class="form__input" type="text" name="min-price" value="0">
-                <span class="form__value">От</span>
-            </label>
-            <label class="form__label form__label--price">
-                <input v-model.number="currentPriceTo" class="form__input" type="text" name="max-price" value="12345">
-                <span class="form__value">До</span>
-            </label>
+                <legend class="form__legend">Цена</legend>
+                <label class="form__label form__label--price">
+                    <input v-model.number="currentPriceFrom" class="form__input" type="text" name="min-price" value="0">
+                    <span class="form__value">От</span>
+                </label>
+                <label class="form__label form__label--price">
+                    <input v-model.number="currentPriceTo" class="form__input" type="text" name="max-price" value="12345">
+                    <span class="form__value">До</span>
+                </label>
             </fieldset>
 
             <fieldset class="form__block">
-            <legend class="form__legend">Категория</legend>
-            <label class="form__label form__label--select">
-                <select v-model.number="currentCategoryId" class="form__select" type="text" name="category">
-                    <option value="0">Все категории</option>
-                    <option v-for="category in categories" :key="category.id" :value="category.id">{{category.name}}</option>
-                </select>
-            </label>
+                <legend class="form__legend">Категория</legend>
+                <label class="form__label form__label--select">
+                    <select v-model.number="currentCategoryId" class="form__select" type="text" name="category">
+                        <option value="0">Все категории</option>
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
+                        </option>
+                    </select>
+                </label>
             </fieldset>
 
             <!-- <fieldset class="form__block">
@@ -136,10 +137,10 @@
             </fieldset> -->
 
             <button class="filter__submit button button--primery" type="submit">
-            Применить
+                Применить
             </button>
             <button @click.prevent="reset" class="filter__reset button button--second" type="button">
-            Сбросить
+                Сбросить
             </button>
         </form>
     </aside>
