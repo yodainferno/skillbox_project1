@@ -2,7 +2,7 @@
   <div v-if="products.length > 0">
     <h2 v-if="title">{{ title }}</h2>
     <ul class="catalog__list">
-      <ProductItem v-for="product in products" :product="product" :key="product.id" @goToPage="(page, data) => $emit('goToPage', page, data)"/>
+      <ProductItem v-for="product in products" :product="product" :key="product.id"/>
     </ul>
   </div>
 </template>
