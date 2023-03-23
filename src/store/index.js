@@ -22,6 +22,15 @@ export default new Vuex.Store({
                     amount
                 })
             }
+        },
+        updateCartProductAmount(state, {productId, amount}) {
+            const item = state.cartProducts.find(el => el.productId === productId);
+            if (item) {
+                item.amount = amount
+            }
+        },
+        deleteCartProduct(state, productId) {
+            state.cartProducts = state.cartProducts.filter((el) => el.productId !== productId);
         }
     },
     getters: {
