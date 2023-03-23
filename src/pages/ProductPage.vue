@@ -55,7 +55,7 @@
                     {{ product.title }}
                 </h2>
                 <div class="item__form">
-                <form class="form" action="#" method="POST">
+                <form class="form" action="#" method="POST" @submit.prevent="addToCart">
                     <b class="item__price">
                         {{ product.price | numberFormat }} ₽
                     </b>
@@ -120,17 +120,17 @@
                     <div class="item__row">
                     <div class="form__counter">
                         <button type="button" aria-label="Убрать один товар">
-                        <svg width="12" height="12" fill="currentColor">
-                            <use xlink:href="#icon-minus"></use>
-                        </svg>
+                            <svg width="12" height="12" fill="currentColor">
+                                <use xlink:href="#icon-minus"></use>
+                            </svg>
                         </button>
 
-                        <input type="text" value="1" name="count">
+                        <input type="text" v-model.number="productAmount" name="count">
 
                         <button type="button" aria-label="Добавить один товар">
-                        <svg width="12" height="12" fill="currentColor">
-                            <use xlink:href="#icon-plus"></use>
-                        </svg>
+                            <svg width="12" height="12" fill="currentColor">
+                                <use xlink:href="#icon-plus"></use>
+                            </svg>
                         </button>
                     </div>
 
@@ -202,6 +202,19 @@ import products from '@/data/products';
 import categories from '@/data/categories';
 
 export default {
+    data() {
+        return {
+            productAmount: 1
+        }
+    },
+    methods: {
+        addToCart() {
+            this.$store.commit(
+                'addProductToCart',
+                {productId: this.product.id, amount: this.productAmount}
+            )
+        }
+    },
     filters: {
         numberFormat
     },
