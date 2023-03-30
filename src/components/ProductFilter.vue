@@ -20,7 +20,7 @@
                 <label class="form__label form__label--select">
                     <select v-model.number="currentCategoryId" class="form__select" type="text" name="category">
                         <option value="0">Все категории</option>
-                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}
+                        <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.title }}
                         </option>
                     </select>
                 </label>
@@ -147,19 +147,25 @@
 </template>
 
 <script>
-import categories from '@/data/categories';
+// import categories from '@/data/categories';
+import axios from 'axios';
+import {API_BASE_URL} from '@/config';
+
 export default {
     data() {
         return {
             currentPriceFrom: 0,
             currentPriceTo: 0,
             currentCategoryId: 0,
+
+            categoriesData: null
         };
     },
     props: ['priceFrom', 'priceTo', 'categoryId'],
     computed: {
         categories() {
-            return categories;
+            return this.categoriesData ? this.categoriesData.items : []
+            // return categories;
         }
     },
     watch: {
@@ -174,6 +180,11 @@ export default {
         }
     },
     methods: {
+        loadCategories() {
+            axios
+            .get(API_BASE_URL + '/api/productCategories')
+            .then(reponse => this.categoriesData = reponse.data)
+        },
         submit() {
             this.$emit('update:priceFrom', this.currentPriceFrom)
             this.$emit('update:priceTo', this.currentPriceTo)
@@ -184,6 +195,9 @@ export default {
             this.$emit('update:priceTo', 0)
             this.$emit('update:categoryId', 0)
         }
+    },
+    created() {
+        this.loadCategories();
     }
 }
 </script>
