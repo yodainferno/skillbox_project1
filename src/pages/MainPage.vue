@@ -16,8 +16,13 @@
           :category-id.sync="filterCategoryId"
           :color.sync="filterColor"
         />
-  
-        <section class="catalog">
+        <div style="display: flex; align-items: center;" v-if="productIsLoading">
+          <BaseLoader/>
+          <div style="margin-left: 1rem;">Загрузка товаров...</div>
+          
+        </div>
+        <div v-else-if="productLoadingFailed">Ошибка загрузки <button @click="loadProducts">Повторить</button></div>
+        <section v-else class="catalog">
           <ul class="catalog__list">
             <ProductList :products="products" :title="title"/>
             <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage"/>
@@ -30,13 +35,14 @@
   <script>
   // import products from '@/data/products';
   import ProductList from '@/components/ProductList.vue';
+  import BaseLoader from '@/components/BaseLoader.vue';
   import BasePagination from '@/components/BasePagination.vue';
   import ProductFilter from '@/components/ProductFilter.vue';
   import axios from 'axios';
   import { API_BASE_URL } from '@/config';
 
   export default {
-    components: { ProductList, BasePagination, ProductFilter },
+    components: { BaseLoader, ProductList, BasePagination, ProductFilter },
     data() {
       return {
         filterPriceFrom: 0,
@@ -48,7 +54,9 @@
         productsPerPage: 3,
         title: 'Каталог моих товаров',
 
-        productsData: null
+        productsData: null,
+        productIsLoading: false,
+        productLoadingFailed: false,
       };
     },
     computed: {
@@ -86,6 +94,9 @@
     },
     methods: {
       loadProducts() {
+        this.productIsLoading = true;
+        this.productLoadingFailed = false;
+
         clearTimeout(this.loadProductsTimer);
 
         this.loadProductsTimer = setTimeout(() => {
@@ -101,6 +112,8 @@
             }
           })
           .then(reponse => this.productsData = reponse.data)
+          .catch(() => this.productLoadingFailed = true)
+          .then(() => this.productIsLoading = false)
         }, 0);
       }
     },
