@@ -206,8 +206,22 @@
 
 <script>
 import CardIndicator from './components/CardIndicator.vue';
+import { mapActions, mapMutations } from 'vuex'
 export default {
-  components: {CardIndicator}
+  components: {CardIndicator},
+  created() {
+    // this.$store.dispatch('loadCart')
+    const userAccessKey = localStorage.getItem('updateUserAccessKey')
+    if (userAccessKey) {
+      this.updateUserAccessKey(userAccessKey) // если было в local storage - то запишем
+    }
+    this.loadCart()
+
+  },
+  methods: {
+    ...mapActions(['loadCart']),
+    ...mapMutations(['updateUserAccessKey'])
+  }
 };
 
 </script>
