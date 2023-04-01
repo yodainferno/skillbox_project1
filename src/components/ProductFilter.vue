@@ -26,6 +26,16 @@
                 </label>
             </fieldset>
 
+            <div v-if="colorsData">
+                <div>Цвет:</div>
+                <select v-model="currentColor" style="margin-bottom: 3rem;">
+                    <option value="0">Не выбрано</option>
+                    <option v-for="colorData in colorsData" :value="colorData.id">
+                        {{colorData.title}}
+                    </option>
+                </select>
+            </div>
+
             <!-- <fieldset class="form__block">
             <legend class="form__legend">Цвет</legend>
             <ul class="colors">
@@ -157,8 +167,10 @@ export default {
             currentPriceFrom: 0,
             currentPriceTo: 0,
             currentCategoryId: 0,
+            currentColor: 0,
 
-            categoriesData: null
+            categoriesData: null,
+            colorsData: null,
         };
     },
     props: ['priceFrom', 'priceTo', 'categoryId'],
@@ -185,19 +197,27 @@ export default {
             .get(API_BASE_URL + '/api/productCategories')
             .then(reponse => this.categoriesData = reponse.data)
         },
+        loadColors() {
+            axios
+            .get(API_BASE_URL + '/api/colors')
+            .then(reponse => this.colorsData = reponse.data.items)
+        },
         submit() {
             this.$emit('update:priceFrom', this.currentPriceFrom)
             this.$emit('update:priceTo', this.currentPriceTo)
             this.$emit('update:categoryId', this.currentCategoryId)
+            this.$emit('update:color', this.currentColor)
         },
         reset() {
             this.$emit('update:priceFrom', 0)
             this.$emit('update:priceTo', 0)
             this.$emit('update:categoryId', 0)
+            this.$emit('update:color', 0)
         }
     },
     created() {
         this.loadCategories();
+        this.loadColors();
     }
 }
 </script>

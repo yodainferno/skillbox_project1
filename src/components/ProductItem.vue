@@ -13,22 +13,10 @@
     </span>
 
     <ul class="colors">
-      <li class="colors__item">
+      <li class="colors__item" v-for="productColor in product.colors">
         <label class="colors__label">
-          <input v-model="color" class="colors__radio sr-only" type="radio" value="#73B6EA">
-          <span class="colors__value" style="background-color: #73B6EA;"></span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input v-model="color" class="colors__radio sr-only" type="radio" value="#FFBE15">
-          <span class="colors__value" style="background-color: #FFBE15;"></span>
-        </label>
-      </li>
-      <li class="colors__item">
-        <label class="colors__label">
-          <input v-model="color" class="colors__radio sr-only" type="radio" value="#939393">
-          <span class="colors__value" style="background-color: #939393;"></span>
+          <input v-model="color" class="colors__radio sr-only" type="radio" :value="productColor.code">
+          <span class="colors__value" :style="{['background-color']: productColor.code}"></span>
         </label>
       </li>
     </ul>
@@ -45,9 +33,12 @@ export default {
   },
   data() {
     return {
-      color: '#73B6EA',
+      color: null,
     };
   },
+  created() {
+    this.color = this.product.colors[0].code;
+  }
 };
 </script>
 
@@ -56,6 +47,6 @@ input[type="radio"]:checked {
   margin: 1rem;
 }
 .colors__radio:checked~.colors__value::before {
-  border: 1.5px solid #00f
+  outline: 3px solid #3f6502;
 }
 </style>
