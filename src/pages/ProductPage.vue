@@ -1,5 +1,16 @@
 <template>
-    <main class="content container">
+    <main class="content container" v-if="productIsLoading">
+        <div style="display: flex; align-items: center;" v-if="productIsLoading">
+          <BaseLoader/>
+          <div style="margin-left: 1rem;">Загрузка товаров...</div>
+          
+        </div>
+    </main>
+
+    <main class="content container" v-else-if="!productData">
+        Ошибка загрузки <button @click="loadProducts">Повторить</button>
+    </main>
+    <main class="content container" v-else="productData">
         <div class="content__top">
             <ul class="breadcrumbs">
                 <li class="breadcrumbs__item">
@@ -9,7 +20,7 @@
                 </li>
                 <li class="breadcrumbs__item">
                 <router-link class="breadcrumbs__link" :to="{name: 'main'}">
-                    {{ category.name }}
+                    {{ category.title }}
                 </router-link>
                 </li>
                 <li class="breadcrumbs__item">
@@ -198,13 +209,20 @@
 <script>
 import numberFormat from '@/helpers/numberFormat'
 
-import products from '@/data/products';
-import categories from '@/data/categories';
-
+// import products from '@/data/products';
+// import categories from '@/data/categories';
+import {API_BASE_URL} from '@/config'
+import BaseLoader from '@/components/BaseLoader'
+import axios from 'axios';
 export default {
+    components: {BaseLoader},
+
     data() {
         return {
-            productAmount: 1
+            productAmount: 1,
+            productData: null,
+            productIsLoading: false,
+            productLoadingFailed: false,
         }
     },
     methods: {
@@ -213,6 +231,16 @@ export default {
                 'addProductToCart',
                 {productId: this.product.id, amount: this.productAmount}
             )
+        },
+        loadProduct() {
+            this.productIsLoading = true;
+            this.productLoadingFailed = false;
+
+            axios
+                .get(API_BASE_URL + '/api/products/' + this.$route.params.id)
+                .then(reponse => this.productData = reponse.data)
+                .catch(() => this.productLoadingFailed = true)
+                .then(() => this.productIsLoading = false)
         }
     },
     filters: {
@@ -220,11 +248,27 @@ export default {
     },
     computed: {
         product() {
-            return products.find(product => product.id === +this.$route.params.id)
+            return {
+                ...this.productData,
+                image: this.productData.image.file.url
+            }
+            // return products.find(product => product.id === +this.$route.params.id)
         },
         category() {
-            return categories.find(category => category.id === this.product.categoryId)
+            return this.productData.category
+            // return categories.find(category => category.id === this.product.categoryId)
         }
     },
+    created() {
+        this.loadProduct()
+    },
+    watch: {
+        '$route.params.id': {
+            handler() {
+                this.loadProduct()
+            },
+            immediate: true
+        }
+    }
 }
 </script>

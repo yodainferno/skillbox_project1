@@ -16,12 +16,12 @@
           :category-id.sync="filterCategoryId"
           :color.sync="filterColor"
         />
-        <div style="display: flex; align-items: center;" v-if="productIsLoading">
+        <div style="display: flex; align-items: center;" v-if="productsIsLoading">
           <BaseLoader/>
           <div style="margin-left: 1rem;">Загрузка товаров...</div>
           
         </div>
-        <div v-else-if="productLoadingFailed">Ошибка загрузки <button @click="loadProducts">Повторить</button></div>
+        <div v-else-if="productsLoadingFailed">Ошибка загрузки <button @click="loadProducts">Повторить</button></div>
         <section v-else class="catalog">
           <ul class="catalog__list">
             <ProductList :products="products" :title="title"/>
@@ -55,8 +55,8 @@
         title: 'Каталог моих товаров',
 
         productsData: null,
-        productIsLoading: false,
-        productLoadingFailed: false,
+        productsIsLoading: false,
+        productsLoadingFailed: false,
       };
     },
     computed: {
@@ -94,8 +94,8 @@
     },
     methods: {
       loadProducts() {
-        this.productIsLoading = true;
-        this.productLoadingFailed = false;
+        this.productsIsLoading = true;
+        this.productsLoadingFailed = false;
 
         clearTimeout(this.loadProductsTimer);
 
@@ -112,8 +112,8 @@
             }
           })
           .then(reponse => this.productsData = reponse.data)
-          .catch(() => this.productLoadingFailed = true)
-          .then(() => this.productIsLoading = false)
+          .catch(() => this.productsLoadingFailed = true)
+          .then(() => this.productsIsLoading = false)
         }, 0);
       }
     },
