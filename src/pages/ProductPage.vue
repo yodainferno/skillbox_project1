@@ -145,10 +145,13 @@
                         </button>
                     </div>
 
-                    <button class="button button--primery" type="submit">
+                    <button class="button button--primery" type="submit" :disabled="productAddSending">
                         В корзину
                     </button>
                     </div>
+
+                    <div v-if="productAdded">Товар добавлен в корзину</div>
+                    <div v-if="productAddSending">Добавляем товар в корзину</div>
                 </form>
                 </div>
             </div>
@@ -214,6 +217,7 @@ import numberFormat from '@/helpers/numberFormat'
 import {API_BASE_URL} from '@/config'
 import BaseLoader from '@/components/BaseLoader'
 import axios from 'axios';
+import { mapActions } from 'vuex';
 export default {
     components: {BaseLoader},
 
@@ -223,14 +227,22 @@ export default {
             productData: null,
             productIsLoading: false,
             productLoadingFailed: false,
+
+            productAdded: false,
+            productAddSending: false,
         }
     },
     methods: {
+        ...mapActions(['addProductToCart']),
         addToCart() {
-            this.$store.commit(
-                'addProductToCart',
-                {productId: this.product.id, amount: this.productAmount}
-            )
+            this.productAdded = false;
+            this.productAddSending = true;
+
+            this.addProductToCart({productId: this.product.id, amount: this.productAmount})
+            .then(() => {
+                this.productAdded = true;
+                this.productAddSending = false;
+            })
         },
         loadProduct() {
             this.productIsLoading = true;
@@ -241,7 +253,7 @@ export default {
                 .then(reponse => this.productData = reponse.data)
                 .catch(() => this.productLoadingFailed = true)
                 .then(() => this.productIsLoading = false)
-        }
+        },
     },
     filters: {
         numberFormat

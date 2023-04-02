@@ -15,18 +15,18 @@ export default new Vuex.Store({
         cartProductsData: []
     },
     mutations: {
-        addProductToCart(state, {productId, amount}) {
-            const item = state.cartProducts.find(el => el.productId === productId);
+        // addProductToCart(state, {productId, amount}) {
+        //     const item = state.cartProducts.find(el => el.productId === productId);
 
-            if (item) {
-                item.amount += amount
-            } else {
-                state.cartProducts.push({
-                    productId,
-                    amount
-                })
-            }
-        },
+        //     if (item) {
+        //         item.amount += amount
+        //     } else {
+        //         state.cartProducts.push({
+        //             productId,
+        //             amount
+        //         })
+        //     }
+        // },
         updateCartProductAmount(state, {productId, amount}) {
             const item = state.cartProducts.find(el => el.productId === productId);
             if (item) {
@@ -91,6 +91,59 @@ export default new Vuex.Store({
                     // синхронизация
                     context.commit('syncCartProducts');
                 });
-        }
+        },
+        async addProductToCart(context, {productId, amount}) {
+            return axios.post(API_BASE_URL + '/api/baskets/products', {
+                productId: productId,
+                quantity: amount,
+            }, {
+                params: {
+                    userAccessKey: context.state.userAccessKey
+                }
+            })
+            .then(response => {
+                context.commit('updateCartProductsData', response.data.items);
+                context.commit('syncCartProducts');
+            });
+        },
+        async updateCartProductAmount(context, {productId, amount}) {
+            context.commit('updateCartProductAmount', {productId, amount}) // не дожидаясь меняем данные сайта
+
+            if (amount < 1) {
+                return;
+            }
+            return axios.put(API_BASE_URL + '/api/baskets/products', {
+                productId: productId,
+                quantity: amount,
+            }, {
+                params: {
+                    userAccessKey: context.state.userAccessKey
+                }
+            })
+            .then(response => {
+                context.commit('updateCartProductsData', response.data.items);
+            })
+            .catch(() => {
+                context.commit('syncCartProducts'); // на случай ошибки - вернуть
+            })
+        },
+        async deleteCartProduct(context, productId) {
+            context.commit('deleteCartProduct', productId) // не дожидаясь меняем данные сайта
+
+            return axios.delete(API_BASE_URL + `/api/baskets/products`, {
+                data: {
+                    productId: productId
+                },
+                params: {
+                    userAccessKey: context.state.userAccessKey
+                }
+            })
+            .then(response => {
+                context.commit('updateCartProductsData', response.data.items);
+            })
+            .catch(() => {
+                context.commit('syncCartProducts'); // на случай ошибки - вернуть
+            })
+        },
     }
 });
