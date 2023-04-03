@@ -21,7 +21,6 @@
         </div>
 
         <b class="product__price">{{ item.amount * item.product.price | numberFormat }} ₽</b>
-{{ item }}
         <button @click.prevent="deleteProduct(item.productId)" class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
             <svg width="20" height="20" fill="currentColor">
             <use xlink:href="#icon-close"></use>
