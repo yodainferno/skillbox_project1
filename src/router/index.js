@@ -6,6 +6,7 @@ import VueRouter from "vue-router";
 import MainPage from '@/pages/MainPage'
 import ProductPage from '@/pages/ProductPage'
 import CartPage from '@/pages/CartPage'
+import OrderPage from '@/pages/OrderPage'
 import NotFoundPage from '@/pages/NotFoundPage'
 
 // сообщаем Vue о намерении использовать VueRouter
@@ -16,6 +17,7 @@ const routes = [
     { name: 'main', component: MainPage, path: '/' },
     { name: 'product', component: ProductPage, path: '/product/:id' },
     { name: 'cart', component: CartPage, path: '/cart' },
+    { name: 'order', component: OrderPage, path: '/order' },
     { name: 'notFound', component: NotFoundPage, path: '*' },
 ];
 
