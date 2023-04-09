@@ -28,7 +28,7 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="order">
         <div class="cart__field">
           <div class="cart__data">
             
@@ -49,20 +49,20 @@
                 placeholder="Введите ваш телефон"
                 type="tel"
                 :error="formError.phone"
-                v-model="formError.phone"/>
+                v-model="formData.phone"/>
 
             <BaseFormText
                 title="Email"
                 placeholder="Введите ваш Email"
                 type="email"
                 :error="formError.email"
-                v-model="formError.email"/>
+                v-model="formData.email"/>
 
             <BaseFormTextArea
                 title="Комментарий к заказу"
                 placeholder="Ваши пожелания"  
-                :error="formError.comments"
-                v-model="formData.comments"/>
+                :error="formError.comment"
+                v-model="formData.comment"/>
           </div>
 
           <div class="cart__options">
@@ -133,13 +133,14 @@
           </div>
 
           <button class="cart__button button button--primery" type="submit">
-            Оформить заказ
+            <div v-if="orderSending"><BaseLoader/></div>
+            <div v-else>Оформить заказ</div>
           </button>
         </div>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -152,16 +153,21 @@ import BaseFormText from '@/components/BaseFormText'
 import BaseFormTextArea from '@/components/BaseFormTextArea'
 import numberFormat from '@/helpers/numberFormat';
 import { mapGetters } from 'vuex'
+import axios from 'axios'
+import { API_BASE_URL } from '@/config';
+import BaseLoader from '@/components/BaseLoader.vue';
     
 export default {
     filters: {
         numberFormat
     },
-    components: {BaseFormText, BaseFormTextArea},
+    components: {BaseFormText, BaseFormTextArea, BaseLoader},
     data() {
         return {
             formData: {},
             formError: {},
+            formErrorMessage: '',
+            orderSending: false
         }
     },
     computed: {
@@ -169,6 +175,33 @@ export default {
             products: 'cartDetailProducts',
             totalPrice: 'cartTotalPrice'
         }),
+    },
+    methods: {
+      order() {
+        if (this.orderSending) return;
+
+        this.orderSending = true;
+        this.formError = {}
+        this.formErrorMessage = ''
+
+        axios.post(API_BASE_URL+'/api/orders', {
+          ...this.formData,
+        }, {
+          params: {
+            userAccessKey: this.$store.state.userAccessKey
+          }
+        })
+        .then(() => {
+          this.$store.commit('resetCard');
+        })
+        .catch(error => {
+          this.formError = error.response.data.error.request || {}
+          this.formErrorMessage = error.response.data.error.message;
+        })
+        .finally(() => {
+          this.orderSending = false
+        });        
+      }
     }
 
 }
